@@ -5,6 +5,7 @@
 using Jade.Ecs;
 using Jade.Ecs.Plugins;
 using Jade.Ecs.Systems;
+using Jade.Input;
 
 namespace Jade.Hosting;
 
@@ -124,6 +125,19 @@ public sealed class ApplicationBuilder
         where T : class
     {
         _world.AddResource(resource);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds an action input system and state for a specific action type to the ECS world.
+    /// </summary>
+    /// <typeparam name="T">The enumeration type representing the actions.</typeparam>
+    /// <returns>The current instance of <see cref="ApplicationBuilder"/>.</returns>
+    public ApplicationBuilder AddActionInput<T>()
+        where T : struct, Enum
+    {
+        _world.AddResource<ActionState<T>>();
+        _world.AddSystem<ActionInputSystem<T>>(SystemStage.PreUpdate | SystemStage.PostUpdate);
         return this;
     }
 
