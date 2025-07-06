@@ -73,10 +73,11 @@ public sealed partial class World
     /// Removes a resource of type <typeparamref name="T"/> from the world.
     /// </summary>
     /// <typeparam name="T">The type of the resource, which must be a class.</typeparam>
-    public void RemoveResource<T>()
+    /// <returns><c>true</c> if the resource was successfully removed; otherwise, <c>false</c>.</returns>
+    public bool RemoveResource<T>()
         where T : class
     {
-        _resources.Remove(typeof(T));
+        return _resources.Remove(typeof(T));
     }
 
     /// <summary>
