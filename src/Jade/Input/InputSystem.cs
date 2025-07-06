@@ -4,7 +4,6 @@
 
 using Jade.Ecs.Events;
 using Jade.Ecs.Systems;
-using Jade.Ecs.Systems.Attributes;
 using Jade.Input.Events;
 
 namespace Jade.Input;
@@ -12,7 +11,6 @@ namespace Jade.Input;
 /// <summary>
 /// Represents the input system responsible for processing input events and updating input states.
 /// </summary>
-[RunAfter<InputEventSystem>]
 public sealed class InputSystem : SystemBase
 {
     /// <summary>
