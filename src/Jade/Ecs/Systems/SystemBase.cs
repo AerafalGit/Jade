@@ -13,7 +13,7 @@ public abstract partial class SystemBase
     /// <summary>
     /// Gets or sets the ECS world associated with this system.
     /// </summary>
-    internal World World { get; set; } = null!;
+    protected internal World World { get; set; } = null!;
 
     /// <summary>
     /// Called when the system is started up.
