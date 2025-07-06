@@ -9,6 +9,7 @@ using Jade.Ecs.Components;
 using Jade.Ecs.Entities;
 using Jade.Ecs.Events;
 using Jade.Ecs.Relations;
+using Jade.Ecs.Systems;
 
 namespace Jade.Ecs;
 
@@ -25,6 +26,7 @@ public sealed partial class World : IDisposable
     private readonly List<ushort> _versions;
     private readonly RelationGraph _relationGraph;
     private readonly EventBus _eventBus;
+    private readonly SystemRunner _systemRunner;
 
     private bool _isDisposed;
     private uint _nextEntityId = 1;
@@ -41,6 +43,7 @@ public sealed partial class World : IDisposable
         _versions = [0];
         _relationGraph = new RelationGraph();
         _eventBus = new EventBus();
+        _systemRunner = new SystemRunner(this);
 
         CreateArchetypeFor(new ComponentMask());
     }
