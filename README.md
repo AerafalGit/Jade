@@ -65,7 +65,7 @@ graph LR
         direction TB
         World["<strong>World</strong><br/>(Facade & Owner)"]
     end
-    
+
     subgraph Managed Subsystems
         direction TB
         SystemStorage["System Storage<br/><i>Scheduler</i>"]
@@ -78,13 +78,13 @@ graph LR
     Plugin -- "configures" --> World
     System -- "is executed by" --> SystemStorage
     System -- "interacts with" --> World
-    
+
     World -- "owns & manages" --> SystemStorage
     World -- "owns & manages" --> ArchetypeStorage
     World -- "owns & manages" --> RelationStorage
     World -- "owns & manages" --> EventStorage
     World -- "owns & manages" --> ResourceStorage
-    
+
     classDef default fill:#1f2228,stroke:#888,stroke-width:2px,color:#fff;
     classDef user fill:#2a9d8f,stroke:#fff;
     classDef world fill:#e9c46a,stroke:#333,color:#000;
@@ -105,7 +105,7 @@ graph LR
 
 - 🚧 Rendering: WebGPU graphics pipeline integration.
 
-- 🚧 User Input: Keyboard, mouse, and gamepad handling.
+- ✅ User Input: Keyboard, mouse, and gamepad handling.
 
 - 🚧 Physics: Integration of a physics engine.
 
