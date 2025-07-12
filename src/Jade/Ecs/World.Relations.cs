@@ -113,6 +113,7 @@ public sealed partial class World
             throw new ArgumentException("Both source and target must be alive entities.");
 
         RelationGraph.AddRelation(source, relationType, target);
+        Interlocked.Increment(ref _structuralVersion);
         return source;
     }
 
@@ -143,7 +144,12 @@ public sealed partial class World
         if (!IsAlive(source) || !IsAlive(target))
             return false;
 
-        return RelationGraph.RemoveRelation(source, relationType, target);
+        var removed = RelationGraph.RemoveRelation(source, relationType, target);
+
+        if (removed)
+            Interlocked.Increment(ref _structuralVersion);
+
+        return removed;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -59,6 +59,7 @@ public sealed partial class World
         _locations[id] = new EntityLocation(archetype, chunkIndex, indexInChunk);
 
         EntityCount++;
+        Interlocked.Increment(ref _structuralVersion);
         return entity;
     }
 
@@ -114,6 +115,7 @@ public sealed partial class World
         _recycledIds.Enqueue(id);
 
         EntityCount--;
+        Interlocked.Increment(ref _structuralVersion);
     }
 
     private void Transition<T>(in Entity entity, Func<Archetype, Archetype?> transitionFn, in T newComponent)

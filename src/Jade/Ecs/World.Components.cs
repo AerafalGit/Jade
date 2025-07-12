@@ -40,6 +40,8 @@ public sealed partial class World
         }
         else
             Transition(entity, archetype => archetype.AddTransitions.GetValueOrDefault(componentId), in component);
+
+        Interlocked.Increment(ref _structuralVersion);
     }
 
     public void RemoveComponent<T>(Entity entity)
@@ -59,6 +61,8 @@ public sealed partial class World
         }
         else
             Transition(entity, componentId, archetype => archetype.RemoveTransitions.GetValueOrDefault(componentId));
+
+        Interlocked.Increment(ref _structuralVersion);
     }
 
     public ref T GetComponent<T>(Entity entity)
