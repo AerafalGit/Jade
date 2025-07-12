@@ -73,6 +73,15 @@ internal sealed unsafe class ComponentArray<T> : ComponentArray
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Span<T> GetSpan(int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, Capacity);
+
+        return new Span<T>(GetUnsafePtr(), Math.Min(count, Capacity));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref T Get(int index)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(index);
