@@ -108,7 +108,7 @@ internal sealed unsafe class ComponentArray<T> : ComponentArray
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(toIndex, Capacity);
 
         if(fromIndex != toIndex)
-            Ptr[toIndex] = Ptr[fromIndex];
+            GetUnsafePtr()[toIndex] = GetUnsafePtr()[fromIndex];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
