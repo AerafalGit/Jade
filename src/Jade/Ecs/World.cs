@@ -4,6 +4,7 @@
 
 using Jade.Ecs.Abstractions;
 using Jade.Ecs.Archives;
+using Jade.Ecs.Events;
 using Jade.Ecs.Prefabs;
 using Jade.Ecs.Relations;
 
@@ -21,20 +22,23 @@ public sealed partial class World : IDisposable
 
     private RelationGraph RelationGraph { get; }
 
-    internal ulong StructuralVersion =>
-        _structuralVersion;
+    private PrefabRegistry PrefabRegistry { get; }
 
-    internal PrefabRegistry PrefabRegistry { get; }
+    private EventBus EventBus { get; }
 
     internal Archive Archive { get; }
 
     internal int EntityCount { get; private set; }
+
+    internal ulong StructuralVersion =>
+        _structuralVersion;
 
     public World()
     {
         Archive = new Archive(this);
         RelationGraph = new RelationGraph();
         PrefabRegistry = new PrefabRegistry(this);
+        EventBus = new EventBus();
 
         _locations = [];
         _resources = [];
