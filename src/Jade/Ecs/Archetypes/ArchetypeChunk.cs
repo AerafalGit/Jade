@@ -20,6 +20,12 @@ internal sealed unsafe class ArchetypeChunk : IDisposable
     private readonly Entity* _entities;
     private readonly Dictionary<ComponentId, ComponentArray> _componentArrays;
 
+    private Entity[]? _filteredCache;
+    private Func<Entity, bool>[]? _cachedFilters;
+    private int _cachedFiltersCount;
+    private int _filteredCount;
+    private ulong _cacheVersion;
+
     public int Count { get; private set; }
 
     public bool IsFull
@@ -53,6 +59,33 @@ internal sealed unsafe class ArchetypeChunk : IDisposable
     ~ArchetypeChunk()
     {
         ReleaseUnmanagedResources();
+    }
+
+    public ReadOnlySpan<Entity> GetFilteredEntities(IReadOnlyList<Func<Entity, bool>> filters, ulong worldVersion)
+    {
+        if (filters.Count == 0)
+            return Entities;
+
+        if (_cacheVersion == worldVersion && _cachedFiltersCount == filters.Count && _filteredCache is not null)
+        {
+            if (!filters.Where((t, i) => !ReferenceEquals(_cachedFilters?[i], t)).Any())
+                return new ReadOnlySpan<Entity>(_filteredCache, 0, _filteredCount);
+        }
+
+        _filteredCache ??= new Entity[Capacity];
+        _filteredCount = 0;
+
+        foreach (var entity in Entities)
+        {
+            if (filters.All(f => f(entity)))
+                _filteredCache[_filteredCount++] = entity;
+        }
+
+        _cacheVersion = worldVersion;
+        _cachedFilters = [.. filters];
+        _cachedFiltersCount = filters.Count;
+
+        return new ReadOnlySpan<Entity>(_filteredCache, 0, _filteredCount);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
