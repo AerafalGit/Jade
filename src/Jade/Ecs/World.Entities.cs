@@ -14,6 +14,12 @@ namespace Jade.Ecs;
 public sealed partial class World
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public EntityCommands Spawn()
+    {
+        return new EntityCommands(this, CreateEntity());
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity CreateEntity()
     {
         return CreateEntity(null);
