@@ -3,7 +3,6 @@
 // See the license here https://github.com/AerafalGit/Jade/blob/main/LICENSE.
 
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Jade.Ecs.Abstractions;
 using Jade.Ecs.Abstractions.Components;
 using Jade.Ecs.Archetypes;
@@ -81,37 +80,9 @@ public ref partial struct Query
         return ref strategy is ArchiveType.Archetype ? ref componentArray.Get(0) : ref sparseSet!.Get<T>(entity);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private readonly ReadOnlySpan<Entity> GetMatchingEntities(ArchetypeChunk chunk)
     {
-        if (_filters.Count is 0)
-            return chunk.Entities;
-
-        if (chunk.Count is 0)
-            return [];
-
-        if (chunk.Count <= ComponentMask.MaxComponents)
-        {
-            Span<Entity> buffer = stackalloc Entity[chunk.Count];
-
-            var count = 0;
-
-            foreach (var entity in chunk.Entities)
-            {
-                if (_filters.All(f => f(entity)))
-                    buffer[count++] = entity;
-            }
-
-            return buffer[..count].ToArray();
-        }
-
-        var entities = new List<Entity>(chunk.Count);
-
-        foreach (var entity in chunk.Entities)
-        {
-            if (_filters.All(f => f(entity)))
-                entities.Add(entity);
-        }
-
-        return CollectionsMarshal.AsSpan(entities);
+        return chunk.GetFilteredEntities(_filters, _world.StructuralVersion);
     }
 }
