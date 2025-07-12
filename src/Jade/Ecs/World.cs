@@ -17,8 +17,12 @@ public sealed partial class World : IDisposable
     private readonly Queue<uint> _recycledIds;
 
     private uint _nextId;
+    private ulong _structuralVersion;
 
     private RelationGraph RelationGraph { get; }
+
+    internal ulong StructuralVersion =>
+        _structuralVersion;
 
     internal PrefabRegistry PrefabRegistry { get; }
 
@@ -37,11 +41,17 @@ public sealed partial class World : IDisposable
         _versions = [0];
         _recycledIds = [];
         _nextId = 1;
+        _structuralVersion = 1;
     }
 
     ~World()
     {
         ReleaseUnmanagedResources();
+    }
+
+    internal void InvalidateStructuralVersion()
+    {
+        Interlocked.Increment(ref _structuralVersion);
     }
 
     private void ReleaseUnmanagedResources()
