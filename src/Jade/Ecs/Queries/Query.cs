@@ -89,14 +89,27 @@ public ref partial struct Query
         if (chunk.Count is 0)
             return [];
 
-        var entities = new List<Entity>();
+        if (chunk.Count <= ComponentMask.MaxComponents)
+        {
+            Span<Entity> buffer = stackalloc Entity[chunk.Count];
+
+            var count = 0;
+
+            foreach (var entity in chunk.Entities)
+            {
+                if (_filters.All(f => f(entity)))
+                    buffer[count++] = entity;
+            }
+
+            return buffer[..count].ToArray();
+        }
+
+        var entities = new List<Entity>(chunk.Count);
 
         foreach (var entity in chunk.Entities)
         {
-            if (!_filters.All(f => f(entity)))
-                continue;
-
-            entities.Add(entity);
+            if (_filters.All(f => f(entity)))
+                entities.Add(entity);
         }
 
         return CollectionsMarshal.AsSpan(entities);
