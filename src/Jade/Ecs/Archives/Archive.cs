@@ -103,6 +103,7 @@ internal sealed class Archive : IDisposable
         sparseSet.Dispose();
 
         _storageStrategy[componentId] = ArchiveType.Archetype;
+        _world.InvalidateStructuralVersion();
     }
 
     private void MigrateToSparseSet(in ComponentId componentId)
@@ -131,6 +132,7 @@ internal sealed class Archive : IDisposable
 
         _sparseSets[componentId] = sparseSet;
         _storageStrategy[componentId] = ArchiveType.SparseSet;
+        _world.InvalidateStructuralVersion();
     }
 
     private int GetComponentEntityCount(in ComponentId id)
