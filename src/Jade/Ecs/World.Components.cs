@@ -19,13 +19,24 @@ public sealed partial class World
             return;
 
         var componentId = Component<T>.Metadata.Id;
+        var strategy = Archive.GetStrategy(componentId);
 
-        if (Archive.GetStrategy(componentId) is ArchiveType.SparseSet)
+        if (strategy is ArchiveType.SparseSet)
         {
-            Archive.GetSparseSet(componentId)!.Add(entity, component);
+            var sparseSet = Archive.GetSparseSet(componentId)!;
+            sparseSet.Add(entity, component);
 
             if (!_locations[entity.Id].Archetype.Mask.Has(componentId))
-                Transition(entity, archetype => archetype.AddTransitions.GetValueOrDefault(componentId), in component);
+            {
+                var newMask = _locations[entity.Id].Archetype.Mask.With(componentId);
+                var targetArchetype = Archive.GetOrCreateArchetype(newMask);
+
+                if (targetArchetype != _locations[entity.Id].Archetype)
+                {
+                    var oldLocation = _locations[entity.Id];
+                    MoveEntityToNewArchetype(entity, oldLocation, targetArchetype);
+                }
+            }
         }
         else
             Transition(entity, archetype => archetype.AddTransitions.GetValueOrDefault(componentId), in component);
