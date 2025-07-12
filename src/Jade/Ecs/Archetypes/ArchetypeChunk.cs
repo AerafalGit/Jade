@@ -37,6 +37,8 @@ internal sealed unsafe class ArchetypeChunk : IDisposable
     public ArchetypeChunk(IEnumerable<ComponentId> ids)
     {
         _entities = (Entity*)NativeMemory.AlignedAlloc((nuint)(Capacity * sizeof(Entity)), Alignment);
+        NativeMemory.Clear(_entities, (nuint)(Capacity * sizeof(Entity)));
+
         _componentArrays = [];
 
         foreach (var id in ids)
