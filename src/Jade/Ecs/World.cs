@@ -2,9 +2,9 @@
 // Jade licenses this file to you under the MIT license.
 // See the license here https://github.com/AerafalGit/Jade/blob/main/LICENSE.
 
-using System.Runtime.CompilerServices;
 using Jade.Ecs.Abstractions;
 using Jade.Ecs.Archives;
+using Jade.Ecs.Prefabs;
 using Jade.Ecs.Relations;
 
 namespace Jade.Ecs;
@@ -20,6 +20,8 @@ public sealed partial class World : IDisposable
 
     private RelationGraph RelationGraph { get; }
 
+    internal PrefabRegistry PrefabRegistry { get; }
+
     internal Archive Archive { get; }
 
     internal int EntityCount { get; private set; }
@@ -28,6 +30,7 @@ public sealed partial class World : IDisposable
     {
         Archive = new Archive(this);
         RelationGraph = new RelationGraph();
+        PrefabRegistry = new PrefabRegistry(this);
 
         _locations = [];
         _resources = [];

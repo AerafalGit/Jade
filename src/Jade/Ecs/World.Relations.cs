@@ -96,16 +96,6 @@ public sealed partial class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Entity AddRelation(in Entity source, in ComponentId relationType, in Entity target)
-    {
-        if (!IsAlive(source) || !IsAlive(target))
-            throw new ArgumentException("Both source and target must be alive entities.");
-
-        RelationGraph.AddRelation(source, relationType, target);
-        return source;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DestroyWithChildren(in Entity parent)
     {
         var children = GetChildren(parent);
@@ -114,6 +104,16 @@ public sealed partial class World
             DestroyWithChildren(child);
 
         DestroyEntity(parent);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Entity AddRelation(in Entity source, in ComponentId relationType, in Entity target)
+    {
+        if (!IsAlive(source) || !IsAlive(target))
+            throw new ArgumentException("Both source and target must be alive entities.");
+
+        RelationGraph.AddRelation(source, relationType, target);
+        return source;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
