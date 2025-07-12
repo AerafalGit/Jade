@@ -5,7 +5,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Jade.Ecs;
+namespace Jade.Ecs.Abstractions;
 
 [StructLayout(LayoutKind.Sequential, Pack = 8)]
 public readonly struct Entity : IEquatable<Entity>, IComparable<Entity>
