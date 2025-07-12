@@ -4,6 +4,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Jade.Ecs.Abstractions.Components;
 
 namespace Jade.Ecs.Components;
 
@@ -59,7 +60,7 @@ internal abstract unsafe class ComponentArray : IDisposable
 
 [StructLayout(LayoutKind.Sequential)]
 internal sealed unsafe class ComponentArray<T> : ComponentArray
-    where T : unmanaged
+    where T : unmanaged, IComponent
 {
     public ComponentArray(int size, int alignment, int capacity) : base(size, alignment, capacity)
     {
