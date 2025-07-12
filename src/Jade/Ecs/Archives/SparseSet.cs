@@ -41,7 +41,10 @@ internal sealed unsafe class SparseSet : IDisposable
         _sparseCapacity = capacity;
 
         _sparse = (uint*)NativeMemory.AlignedAlloc((nuint)(_sparseCapacity * sizeof(uint)), Alignment);
+        NativeMemory.Clear(_sparse, (nuint)(_sparseCapacity * sizeof(uint)));
+
         _dense = (Entity*)NativeMemory.AlignedAlloc((nuint)(_denseCapacity * sizeof(Entity)), Alignment);
+        NativeMemory.Clear(_dense, (nuint)(_denseCapacity * sizeof(Entity)));
 
         if (_componentSize > 0)
             _components = (byte*)NativeMemory.AlignedAlloc((nuint)(_denseCapacity * _componentSize), _componentAlignment);
