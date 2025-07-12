@@ -12,6 +12,32 @@ namespace Jade.Ecs;
 public sealed partial class World
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Entity SetDependsOn(in Entity source, in Entity target)
+    {
+        return AddRelation(source, RelationProperty.DependsOn, target);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool RemoveDependsOn(in Entity source, in Entity target)
+    {
+        return IsAlive(source) && IsAlive(target) &&
+               RemoveRelation(source, RelationProperty.DependsOn, target);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool HasDependsOn(in Entity source, in Entity target)
+    {
+        return IsAlive(source) && IsAlive(target) &&
+               HasRelation(source, RelationProperty.DependsOn, target);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<Entity> GetDependsOn(in Entity source)
+    {
+        return GetTargets(source, RelationProperty.DependsOn);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity SetParent(in Entity child, in Entity parent)
     {
         RelationGraph.AddRelation(child, RelationProperty.ChildOf, parent);
@@ -91,21 +117,33 @@ public sealed partial class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal bool HasRelation(in Entity source, in ComponentId relationType, in Entity target)
+    {
+        if (!IsAlive(source) || !IsAlive(target))
+            return false;
+
+        return RelationGraph.HasRelation(source, relationType, target);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal bool HasAnyRelation(in Entity source, in ComponentId relationId)
+    {
+        foreach (var relation in GetOutgoingRelations(source))
+        {
+            if (relation.RelationId == relationId)
+                return true;
+        }
+
+        return false;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool RemoveRelation(in Entity source, in ComponentId relationType, in Entity target)
     {
         if (!IsAlive(source) || !IsAlive(target))
             return false;
 
         return RelationGraph.RemoveRelation(source, relationType, target);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool HasRelation(in Entity source, in ComponentId relationType, in Entity target)
-    {
-        if (!IsAlive(source) || !IsAlive(target))
-            return false;
-
-        return RelationGraph.HasRelation(source, relationType, target);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
