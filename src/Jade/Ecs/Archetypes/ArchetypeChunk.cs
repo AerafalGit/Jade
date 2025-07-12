@@ -112,8 +112,14 @@ internal sealed unsafe class ArchetypeChunk : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SwapAllComponents(int index, void** ptr)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Count);
+
         foreach (var (id, array) in _componentArrays)
-            array.Swap(index, ptr[id]);
+        {
+            if (id >= 0 && id < ComponentMask.MaxComponents)
+                array.Swap(index, ptr[id]);
+        }
     }
 
     private void ReleaseUnmanagedResources()
