@@ -3,23 +3,27 @@
 // See the license here https://github.com/AerafalGit/Jade/blob/main/LICENSE.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Jade.Ecs;
 
 public sealed partial class World
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T? GetResource<T>()
         where T : class
     {
         return _resources.GetValueOrDefault(typeof(T)) as T;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetResource<T>([NotNullWhen(true)] out T? resource)
         where T : class
     {
         return (resource = _resources.GetValueOrDefault(typeof(T)) as T) is not null;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T GetRequiredResource<T>()
         where T : class
     {
@@ -29,6 +33,7 @@ public sealed partial class World
         throw new KeyNotFoundException($"Resource of type {typeof(T).Name} not found.");
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T AddResource<T>()
         where T : class, new()
     {
@@ -40,6 +45,7 @@ public sealed partial class World
         return resource;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T SetResource<T>(T resource)
         where T : class
     {
@@ -47,12 +53,14 @@ public sealed partial class World
         return resource;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool RemoveResource<T>()
         where T : class
     {
         return _resources.Remove(typeof(T));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool RemoveResource<T>(out T? resource)
         where T : class
     {
@@ -64,14 +72,10 @@ public sealed partial class World
         return false;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasResource<T>()
         where T : class
     {
         return _resources.ContainsKey(typeof(T));
-    }
-
-    public void ClearResources()
-    {
-        _resources.Clear();
     }
 }
