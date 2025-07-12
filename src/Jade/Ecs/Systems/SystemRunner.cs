@@ -96,6 +96,14 @@ internal sealed class SystemRunner : IDisposable
         return GetSystem<T>() is not null;
     }
 
+    public SystemStatistics GetSystemStats()
+    {
+        var totalSystems = _systemsByStage.Values.Sum(static list => list.Count);
+        var enabledSystems = _enabledSystems.Count(static kvp => kvp.Value);
+
+        return new SystemStatistics(totalSystems, enabledSystems, totalSystems - enabledSystems, _stages.Length - 1);
+    }
+
     internal void RunStage(SystemStage stage)
     {
         if (_isDirty)
@@ -127,14 +135,6 @@ internal sealed class SystemRunner : IDisposable
                 throw new InvalidOperationException($"Error executing system {metadata.Type.Name} in stage {stage}. See inner exception for details.", ex);
             }
         }
-    }
-
-    public SystemStatistics GetSystemStats()
-    {
-        var totalSystems = _systemsByStage.Values.Sum(static list => list.Count);
-        var enabledSystems = _enabledSystems.Count(static kvp => kvp.Value);
-
-        return new SystemStatistics(totalSystems, enabledSystems, totalSystems - enabledSystems, _stages.Length - 1);
     }
 
     private void AddSystem(SystemStage stage, SystemBase system, Type? type)

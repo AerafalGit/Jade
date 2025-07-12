@@ -7,6 +7,7 @@ using Jade.Ecs.Archives;
 using Jade.Ecs.Events;
 using Jade.Ecs.Prefabs;
 using Jade.Ecs.Relations;
+using Jade.Ecs.Systems;
 
 namespace Jade.Ecs;
 
@@ -24,6 +25,8 @@ public sealed partial class World : IDisposable
 
     private PrefabRegistry PrefabRegistry { get; }
 
+    private SystemRunner SystemRunner { get; }
+
     private EventBus EventBus { get; }
 
     internal Archive Archive { get; }
@@ -39,6 +42,7 @@ public sealed partial class World : IDisposable
         RelationGraph = new RelationGraph();
         PrefabRegistry = new PrefabRegistry(this);
         EventBus = new EventBus();
+        SystemRunner = new SystemRunner(this);
 
         _locations = [];
         _resources = [];
