@@ -49,6 +49,8 @@ internal readonly struct ComponentMask :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ComponentMask With(in ComponentId componentId)
     {
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(componentId.Id, MaxComponentId);
+
         var wordIndex = componentId >> Div64;
         var bitIndex = componentId & Mod64;
 
@@ -61,6 +63,8 @@ internal readonly struct ComponentMask :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ComponentMask Without(in ComponentId componentId)
     {
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(componentId.Id, MaxComponentId);
+
         var wordIndex = componentId >> Div64;
         var bitIndex = componentId & Mod64;
 
@@ -73,6 +77,8 @@ internal readonly struct ComponentMask :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Has(in ComponentId componentId)
     {
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(componentId.Id, MaxComponentId);
+
         var wordIndex = componentId >> Div64;
         var bitIndex = componentId & Mod64;
 
@@ -123,6 +129,46 @@ internal readonly struct ComponentMask :
     public bool Intersects(in ComponentMask other)
     {
         return HasAny(other);
+    }
+
+    public ComponentId[] GetComponents()
+    {
+        var count = PopCount();
+
+        if (count is 0)
+            return [];
+
+        var components = new ComponentId[count];
+        var index = 0;
+
+        if (Avx2.IsSupported)
+        {
+            var bits = _bits.As<ulong, ulong>();
+
+            for (var i = 0; i < 4; i++)
+            {
+                var bit = bits.GetElement(i);
+
+                if (bit is not 0)
+                {
+                    for (var j = 0; j < 64; j++)
+                    {
+                        if ((bit & (1UL << j)) is not 0)
+                            components[index++] = new ComponentId(i * 64 + j);
+                    }
+                }
+            }
+
+            return components;
+        }
+
+        for (var i = 0; i < MaxComponents; i++)
+        {
+            if (Has(i))
+                components[index++] = new ComponentId(i);
+        }
+
+        return components;
     }
 
     public int PopCount()
