@@ -19,32 +19,10 @@ public sealed partial class World
         return CreateEntity(null);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DestroyEntity(in Entity entity)
     {
-        if (!IsAlive(entity))
-            return;
-
-        RelationGraph.RemoveAllRelations(entity);
-
-        var dependentEntities = RelationGraph.GetIncomingRelations(RelationProperty.DependsOn, entity);
-
-        foreach (var dependent in dependentEntities)
-            DestroyEntity(dependent);
-
-        var id = entity.Id;
-
-        if (_locations.Remove(id, out var location))
-        {
-            var movedEntity = location.Archetype.Remove(location.ChunkIndex, location.IndexInChunk);
-
-            if(movedEntity.IsValid)
-                _locations[movedEntity.Id] = new EntityLocation(location.Archetype, location.ChunkIndex, location.IndexInChunk);
-        }
-
-        _versions[(int)id]++;
-        _recycledIds.Enqueue(id);
-
-        EntityCount--;
+        DestroyEntityRecursive(entity, []);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,7 +45,15 @@ public sealed partial class World
                 _versions.Add(0);
         }
 
-        var entity = new Entity(id, ++_versions[(int)id]);
+        var newVersion = _versions[(int)id] + 1;
+
+        if (newVersion is 0)
+            newVersion = 1;
+
+        _versions[(int)id] = newVersion;
+
+        var entity = new Entity(id, newVersion);
+
         var (chunkIndex, indexInChunk) = archetype.Add(entity);
 
         _locations[id] = new EntityLocation(archetype, chunkIndex, indexInChunk);
@@ -95,6 +81,39 @@ public sealed partial class World
     internal void RemoveComponentFromArchetype(in Entity entity, ComponentId componentId)
     {
         Transition(entity, componentId, archetype => archetype.RemoveTransitions.GetValueOrDefault(componentId));
+    }
+
+    private void DestroyEntityRecursive(Entity entity, HashSet<Entity> visited)
+    {
+        if (!IsAlive(entity) || !visited.Add(entity))
+            return;
+
+        RelationGraph.RemoveAllRelations(entity);
+
+        var dependentEntities = RelationGraph.GetIncomingRelations(RelationProperty.DependsOn, entity).ToArray();
+
+        foreach (var dependent in dependentEntities)
+            DestroyEntityRecursive(dependent, visited);
+
+        var id = entity.Id;
+
+        if (_locations.Remove(id, out var location))
+        {
+            var movedEntity = location.Archetype.Remove(location.ChunkIndex, location.IndexInChunk);
+
+            if(movedEntity.IsValid)
+                _locations[movedEntity.Id] = new EntityLocation(location.Archetype, location.ChunkIndex, location.IndexInChunk);
+        }
+
+        var newVersion = _versions[(int)id] + 1;
+
+        if (newVersion is 0)
+            newVersion = 1;
+
+        _versions[(int)id] = newVersion;
+        _recycledIds.Enqueue(id);
+
+        EntityCount--;
     }
 
     private void Transition<T>(in Entity entity, Func<Archetype, Archetype?> transitionFn, in T newComponent)
