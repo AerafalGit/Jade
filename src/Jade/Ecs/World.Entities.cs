@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Jade.Ecs.Abstractions;
 using Jade.Ecs.Abstractions.Components;
 using Jade.Ecs.Archetypes;
+using Jade.Ecs.Bundles;
 using Jade.Ecs.Components;
 using Jade.Ecs.Relations;
 
@@ -17,6 +18,15 @@ public sealed partial class World
     public EntityCommands Spawn()
     {
         return new EntityCommands(this, CreateEntity());
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Entity SpawnBundle<T>(T bundle = default)
+        where T : unmanaged, IBundle
+    {
+        var entity = CreateEntity();
+        bundle.AddToEntity(this, entity);
+        return entity;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

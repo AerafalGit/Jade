@@ -4,6 +4,7 @@
 
 using System.Runtime.CompilerServices;
 using Jade.Ecs.Abstractions.Components;
+using Jade.Ecs.Bundles;
 
 namespace Jade.Ecs.Abstractions;
 
@@ -33,6 +34,40 @@ public sealed class EntityCommands
     {
         if (condition)
             _world.AddComponent(_entity, component);
+        return this;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public EntityCommands With<T>(Func<T> componentFactory)
+        where T : unmanaged, IComponent
+    {
+        _world.AddComponent(_entity, componentFactory());
+        return this;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public EntityCommands WithIf<T>(bool condition, Func<T> componentFactory)
+        where T : unmanaged, IComponent
+    {
+        if (condition)
+            _world.AddComponent(_entity, componentFactory());
+        return this;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public EntityCommands WithBundle<T>(T bundle = default)
+        where T : unmanaged, IBundle
+    {
+        bundle.AddToEntity(_world, this);
+        return this;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public EntityCommands WithBundleIf<T>(bool condition, T bundle = default)
+        where T : unmanaged, IBundle
+    {
+        if (condition)
+            bundle.AddToEntity(_world, this);
         return this;
     }
 
