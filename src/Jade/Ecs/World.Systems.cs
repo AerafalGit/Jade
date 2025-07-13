@@ -65,7 +65,7 @@ public sealed partial class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal void RunStage(SystemStage stage)
+    public void RunStage(SystemStage stage)
     {
         SystemRunner.RunStage(stage);
     }
