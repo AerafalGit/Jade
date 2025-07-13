@@ -38,18 +38,18 @@ public sealed partial class World : IDisposable
 
     public World()
     {
-        Archive = new Archive(this);
-        RelationGraph = new RelationGraph();
-        PrefabRegistry = new PrefabRegistry(this);
-        EventBus = new EventBus();
-        SystemRunner = new SystemRunner(this);
-
         _locations = [];
         _resources = [];
         _versions = [0];
         _recycledIds = [];
         _nextId = 1;
         _structuralVersion = 1;
+
+        Archive = new Archive(this);
+        RelationGraph = new RelationGraph();
+        PrefabRegistry = new PrefabRegistry(this);
+        EventBus = new EventBus();
+        SystemRunner = new SystemRunner(this);
     }
 
     ~World()

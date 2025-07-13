@@ -19,8 +19,8 @@ internal sealed class ArchetypeGraph : IDisposable
     {
         _archetypes = [];
 
-        Root = GetOrCreateArchetype(new ComponentMask());
         QueryCache = new QueryCache(this);
+        Root = GetOrCreateArchetype(new ComponentMask());
     }
 
     ~ArchetypeGraph()

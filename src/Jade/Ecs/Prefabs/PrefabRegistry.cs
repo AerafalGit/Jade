@@ -21,7 +21,7 @@ public sealed class PrefabRegistry
     {
         _prefabsByName = [];
         _world = world;
-        _assets = world.GetRequiredResource<Assets<string>>();
+        _assets = world.SetResource(new Assets<string>());
     }
 
     public Entity RegisterPrefab(string name, Entity prefabEntity)
