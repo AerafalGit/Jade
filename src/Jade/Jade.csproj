@@ -7,7 +7,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <NoWarn>$(NoWarn);NU1903;CS8500</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
