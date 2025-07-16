@@ -1,6 +1,5 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src\Jade.Benchmarks\Jade.Benchmarks.csproj" Type="Classic C#" />
     <Project Path="src\Jade\Jade.csproj" Type="Classic C#" />
   </Folder>
 </Solution>
