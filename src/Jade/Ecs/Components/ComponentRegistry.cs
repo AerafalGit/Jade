@@ -64,7 +64,7 @@ internal static unsafe class ComponentRegistry
                 : IntPtr.Size;
 
             var alignment = isBlittable
-                ? sizeof(ComponentAlignment<T>) - size
+                ? CalculateAlignment<T>()
                 : size;
 
             Func<int, ComponentArray<T>> factory = isBlittable
@@ -78,6 +78,38 @@ internal static unsafe class ComponentRegistry
 
             return metadata;
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int CalculateAlignment<T>()
+    {
+        var naturalAlignment = sizeof(ComponentAlignment<T>) - sizeof(T);
+
+        if (naturalAlignment <= 0)
+        {
+            var size = sizeof(T);
+
+            return size switch
+            {
+                1 => 1,
+                2 => 2,
+                <= 4 => 4,
+                <= 8 => 8,
+                _ => 16
+            };
+        }
+
+        if ((naturalAlignment & (naturalAlignment - 1)) is not 0)
+        {
+            var powerOf2 = 1;
+
+            while (powerOf2 < naturalAlignment)
+                powerOf2 <<= 1;
+
+            return Math.Min(powerOf2, 16);
+        }
+
+        return Math.Min(naturalAlignment, 16);
     }
 
     [StructLayout(LayoutKind.Sequential)]
