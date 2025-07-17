@@ -17,9 +17,17 @@ public sealed unsafe class ComponentArrayUnmanaged<T> : ComponentArray<T>
 
     public ComponentArrayUnmanaged(int size, int alignment, int capacity)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(size);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
+
+        if (alignment <= 0 || (alignment & (alignment - 1)) is not 0)
+            throw new ArgumentException("Alignment must be a positive power of 2", nameof(alignment));
+
         Capacity = capacity;
         ComponentSize = size;
         Ptr = (T*)NativeMemory.AlignedAlloc((nuint)(ComponentSize * Capacity), (nuint)alignment);
+
+        NativeMemory.Clear(Ptr, (nuint)(ComponentSize * Capacity));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

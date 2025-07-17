@@ -10,19 +10,25 @@ namespace Jade.Ecs.Components;
 
 public sealed class ComponentArrayManaged<T> : ComponentArray<T>
 {
+    private bool _disposed;
+
     public T[] Array { get; }
 
     public override int Capacity { get; }
 
     public ComponentArrayManaged(int capacity)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
+
         Capacity = capacity;
         Array = ArrayPool<T>.Shared.Rent(capacity);
+        Array.AsSpan(0, capacity).Clear();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override Span<T> GetSpan(int count)
     {
+        ThrowIfDisposed();
         ArgumentOutOfRangeException.ThrowIfNegative(count);
         return new Span<T>(Array, 0, Math.Min(count, Capacity));
     }
@@ -30,6 +36,7 @@ public sealed class ComponentArrayManaged<T> : ComponentArray<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override ref T GetRef(int index)
     {
+        ThrowIfDisposed();
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Capacity);
         return ref Array[index];
@@ -38,6 +45,7 @@ public sealed class ComponentArrayManaged<T> : ComponentArray<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override void SetRef(int index, in T value)
     {
+        ThrowIfDisposed();
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Capacity);
         Array[index] = value;
@@ -46,6 +54,7 @@ public sealed class ComponentArrayManaged<T> : ComponentArray<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override void Move(int fromIndex, int toIndex)
     {
+        ThrowIfDisposed();
         ArgumentOutOfRangeException.ThrowIfNegative(fromIndex);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(fromIndex, Capacity);
         ArgumentOutOfRangeException.ThrowIfNegative(toIndex);
@@ -61,18 +70,25 @@ public sealed class ComponentArrayManaged<T> : ComponentArray<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override void Reset()
     {
+        ThrowIfDisposed();
         Array.AsSpan(0, Capacity).Clear();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected override void ReleaseUnmanagedResources()
     {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
         ArrayPool<T>.Shared.Return(Array, clearArray: true);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected override void MoveTo(int fromIndex, ComponentArray<T> toArray, int toIndex)
     {
+        ThrowIfDisposed();
         ArgumentOutOfRangeException.ThrowIfNegative(fromIndex);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(fromIndex, Capacity);
         ArgumentOutOfRangeException.ThrowIfNegative(toIndex);
@@ -85,6 +101,7 @@ public sealed class ComponentArrayManaged<T> : ComponentArray<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected override void CopyTo(int fromIndex, ComponentArray<T> toArray, int toIndex)
     {
+        ThrowIfDisposed();
         ArgumentOutOfRangeException.ThrowIfNegative(fromIndex);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(fromIndex, Capacity);
         ArgumentOutOfRangeException.ThrowIfNegative(toIndex);
@@ -106,5 +123,11 @@ public sealed class ComponentArrayManaged<T> : ComponentArray<T>
                 toArray.SetRef(toIndex, Array[fromIndex]);
                 break;
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void ThrowIfDisposed()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, typeof(ComponentArrayManaged<T>));
     }
 }
