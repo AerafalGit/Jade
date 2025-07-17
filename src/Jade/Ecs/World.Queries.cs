@@ -4,11 +4,57 @@
 
 using Jade.Ecs.Archetypes;
 using Jade.Ecs.Components;
+using Jade.Ecs.Queries;
 
 namespace Jade.Ecs;
 
 public sealed partial class World
 {
+    public Query Query()
+    {
+        return new Query(this);
+    }
+
+    public Entity FirstOrDefault()
+    {
+        return Query().FirstOrDefault();
+    }
+
+    public Entity FirstOrDefault(Func<Entity, bool> predicate)
+    {
+        return Query().FirstOrDefault(predicate);
+    }
+
+    public int Count()
+    {
+        return Query().Count();
+    }
+
+    public int Count(Func<Entity, bool> predicate)
+    {
+        return Query().Count(predicate);
+    }
+
+    public bool Any()
+    {
+        return Query().Any();
+    }
+
+    public bool Any(Func<Entity, bool> predicate)
+    {
+        return Query().Any(predicate);
+    }
+
+    public IEnumerable<Entity> GetEntities()
+    {
+        return Query().ToList();
+    }
+
+    public IEnumerable<Entity> GetEntities(Func<Entity, bool> predicate)
+    {
+        return Query().Where(predicate);
+    }
+
     internal IEnumerable<Archetype> GetMatchingArchetypes(in ComponentMask allMask, in ComponentMask anyMask, in ComponentMask noneMask)
     {
         return QueryCache.GetMatchingArchetypes(in allMask, in anyMask, in noneMask);
