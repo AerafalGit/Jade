@@ -11,18 +11,18 @@ using System.Runtime.Intrinsics.X86;
 namespace Jade.Ecs.Components;
 
 [StructLayout(LayoutKind.Sequential, Size = 32)]
-public readonly struct ComponentMask :
+public readonly partial struct ComponentMask :
     IEquatable<ComponentMask>,
     IBitwiseOperators<ComponentMask, ComponentMask, ComponentMask>,
     IEqualityOperators<ComponentMask, ComponentMask, bool>
 {
     private static readonly Vector256<ulong> s_zero = Vector256<ulong>.Zero;
 
+    public static readonly ComponentMask Empty = new();
+
     private const byte Div64 = 6;
 
     private const byte Mod64 = 63;
-
-    private const int MaxComponentId = MaxComponents - 1;
 
     public const int MaxComponents = 256;
 
@@ -145,7 +145,10 @@ public readonly struct ComponentMask :
                     for (var j = 0; j < 64; j++)
                     {
                         if ((bit & (1UL << j)) is not 0)
-                            components[index++] = new ComponentId(i * 64 + j);
+                        {
+                            if (index < components.Length)
+                                components[index++] = new ComponentId(i * 64 + j);
+                        }
                     }
                 }
             }
@@ -153,7 +156,7 @@ public readonly struct ComponentMask :
             return components;
         }
 
-        for (var i = 0; i < MaxComponents; i++)
+        for (var i = 0; i < MaxComponents && index < components.Length; i++)
         {
             if (Has(i))
                 components[index++] = new ComponentId(i);
@@ -209,6 +212,46 @@ public readonly struct ComponentMask :
         }
 
         return new ComponentId(-1);
+    }
+
+    public ComponentMask And<T>()
+    {
+        return With(Component<T>.Metadata.Id);
+    }
+
+    public ComponentMask But<T>()
+    {
+        return Without(Component<T>.Metadata.Id);
+    }
+
+    public bool IsSubsetOf(ComponentMask other)
+    {
+        return other.HasAll(in this);
+    }
+
+    public bool IsSupersetOf(ComponentMask other)
+    {
+        return HasAll(other);
+    }
+
+    public bool Overlaps(ComponentMask other)
+    {
+        return HasAny(other);
+    }
+
+    public ComponentMask Union(ComponentMask other)
+    {
+        return this | other;
+    }
+
+    public ComponentMask Intersect(ComponentMask other)
+    {
+        return this & other;
+    }
+
+    public ComponentMask Except(ComponentMask other)
+    {
+        return this & ~other;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
