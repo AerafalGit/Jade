@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "DebugRoslynSourceGenerator": {
+    "Jade": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "../Jade.SourceGenerators.Sample/Jade.SourceGenerators.Sample.csproj"
+      "targetProject": "../Jade/Jade.csproj"
     }
   }
 }
