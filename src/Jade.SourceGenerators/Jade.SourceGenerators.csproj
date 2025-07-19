@@ -8,6 +8,7 @@
     <LangVersion>latest</LangVersion>
 
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <IsRoslynComponent>true</IsRoslynComponent>
 
     <RootNamespace>Jade.SourceGenerators</RootNamespace>
