@@ -27,7 +27,7 @@ file sealed record DisposableAction(Action Action) : IDisposable
 /// Provides functionality to build strings with indentation support.
 /// </summary>
 [DebuggerDisplay("{ToString(),nq}")]
-public sealed class IndentedStringBuilder
+internal sealed class IndentedStringBuilder
 {
     private readonly StringBuilder _builder;
     private int _indentation;
