@@ -9,6 +9,7 @@
 
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsRoslynComponent>true</IsRoslynComponent>
 
     <RootNamespace>Jade.SourceGenerators</RootNamespace>
