@@ -35,7 +35,7 @@ public readonly partial struct ComponentMask :
     /// <summary>
     /// The maximum number of components supported by the mask.
     /// </summary>
-    private const int MaxComponents = 256;
+    public const int MaxComponents = 256;
 
     private readonly Vector256<ulong> _bits;
 
