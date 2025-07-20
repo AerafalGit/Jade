@@ -97,7 +97,7 @@ public static unsafe class ComponentRegistry
                 ? capacity => new ComponentArrayUnmanaged<T>(size, alignment, capacity)
                 : capacity => new ComponentArrayManaged<T>(capacity);
 
-            metadata = new ComponentMetadata(id, size, factory);
+            metadata = new ComponentMetadata(id, isBlittable, factory);
 
             s_metadataByType[type] = metadata;
             s_metadataById[id] = metadata;

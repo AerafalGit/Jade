@@ -22,4 +22,14 @@ public static class Component<T>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => s_metadata.Value.Id;
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the component type <typeparamref name="T"/> is blittable.
+    /// Blittable components can be directly copied in memory.
+    /// </summary>
+    public static bool IsBlittable
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => s_metadata.Value.IsBlittable;
+    }
 }
