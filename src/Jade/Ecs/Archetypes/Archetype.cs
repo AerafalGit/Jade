@@ -65,7 +65,7 @@ public sealed class Archetype : IDisposable
     /// <returns>
     /// A tuple containing the index of the chunk and the index of the entity within the chunk.
     /// </returns>
-    public (int chunkIndex, int indexInChunk) Add(Entity entity)
+    public (int chunkIndex, int indexInChunk) Add(in Entity entity)
     {
         var chunk = GetChunkForAdd();
         var indexInChunk = chunk.Add(entity);

@@ -103,7 +103,7 @@ public sealed unsafe class ArchetypeChunk : IDisposable
     /// <param name="entity">The entity to add.</param>
     /// <returns>The index of the added entity.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int Add(Entity entity)
+    public int Add(in Entity entity)
     {
         var index = Count++;
         _entities[index] = entity;
