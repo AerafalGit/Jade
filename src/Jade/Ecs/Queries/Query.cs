@@ -30,6 +30,12 @@ public ref partial struct Query
         _none = new ComponentMask();
     }
 
+    /// <summary>
+    /// Iterates over entities in the query and executes the provided action.
+    /// </summary>
+    /// <param name="action">
+    /// The action to execute for each entity. The action takes an <see cref="Entity"/> parameter.
+    /// </param>
     public readonly void ForEach(QueryEntityAction action)
     {
         foreach (var archetype in _world.GetMatchingArchetypes(in _all, in _any, in _none))
