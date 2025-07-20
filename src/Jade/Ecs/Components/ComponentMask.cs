@@ -311,7 +311,7 @@ public readonly partial struct ComponentMask :
     /// <c>true</c> if the mask is a subset of the other mask; otherwise, <c>false</c>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsSubsetOf(ComponentMask other)
+    public bool IsSubsetOf(in ComponentMask other)
     {
         return other.HasAll(in this);
     }
@@ -324,7 +324,7 @@ public readonly partial struct ComponentMask :
     /// <c>true</c> if the mask is a superset of the other mask; otherwise, <c>false</c>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsSupersetOf(ComponentMask other)
+    public bool IsSupersetOf(in ComponentMask other)
     {
         return HasAll(other);
     }
@@ -337,7 +337,7 @@ public readonly partial struct ComponentMask :
     /// <c>true</c> if the mask overlaps with the other mask; otherwise, <c>false</c>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Overlaps(ComponentMask other)
+    public bool Overlaps(in ComponentMask other)
     {
         return HasAny(other);
     }
@@ -348,7 +348,7 @@ public readonly partial struct ComponentMask :
     /// <param name="other">The other mask to union with.</param>
     /// <returns>A new mask representing the union.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ComponentMask Union(ComponentMask other)
+    public ComponentMask Union(in ComponentMask other)
     {
         return this | other;
     }
@@ -359,7 +359,7 @@ public readonly partial struct ComponentMask :
     /// <param name="other">The other mask to intersect with.</param>
     /// <returns>A new mask representing the intersection.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ComponentMask Intersect(ComponentMask other)
+    public ComponentMask Intersect(in ComponentMask other)
     {
         return this & other;
     }
@@ -370,7 +370,7 @@ public readonly partial struct ComponentMask :
     /// <param name="other">The other mask to subtract.</param>
     /// <returns>A new mask representing the difference.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ComponentMask Except(ComponentMask other)
+    public ComponentMask Except(in ComponentMask other)
     {
         return this & ~other;
     }
