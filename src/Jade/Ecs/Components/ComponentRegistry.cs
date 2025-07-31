@@ -62,9 +62,7 @@ public static unsafe class ComponentRegistry
     public static IEnumerable<int> GetAllComponentIds()
     {
         lock (s_lock)
-        {
             return s_metadataById.Keys;
-        }
     }
 
     /// <summary>
