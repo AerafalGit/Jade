@@ -404,7 +404,11 @@ public readonly partial struct ComponentMask :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return HashCode.Combine(_bits.GetElement(0), _bits.GetElement(1));
+        return HashCode.Combine(
+            _bits.GetElement(0),
+            _bits.GetElement(1),
+            _bits.GetElement(2),
+            _bits.GetElement(3));
     }
 
     /// <summary>
